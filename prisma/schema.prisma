@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL") // uses connection pooling
+}
+
+model User {
+    id          Int           @id @default(autoincrement())
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    username    String        @unique
+    password    String
+    sessions    Session[]
+    pieces      Piece[]
+    composer    Composer[]
+    arrangers   Arranger[]
+    tags        Tag[]
+    movies      Movie[]
+    explanation Explanation[]
+
+    @@map("users")
+}
+
+model Session {
+    id        String   @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    Int
+
+    @@map("sessions")
+}
+
+model Piece {
+    id            Int           @id @default(autoincrement())
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    createdBy     User?         @relation(fields: [userId], references: [id])
+    userId        Int?
+    title         String
+    publishedAt   PublishedAt?  @relation(fields: [publishedAtId], references: [id])
+    publishedAtId Int?
+    playstyle     Playstyle     @relation(fields: [playstyleId], references: [id])
+    playstyleId   Int
+    composers     Composer[]
+    arrangers     Arranger[]
+    tags          Tag[]
+    movies        Movie[]
+    explanations  Explanation[]
+
+    @@map("pieces")
+}
+
+model Composer {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User?    @relation(fields: [userId], references: [id])
+    userId    Int?
+    name      String
+    pieces    Piece[]
+
+    @@map("composers")
+}
+
+model Arranger {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User?    @relation(fields: [userId], references: [id])
+    userId    Int?
+    name      String
+    pieces    Piece[]
+
+    @@map("arrangers")
+}
+
+model PublishedAt {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    era       Int
+    label     String
+    piece     Piece[]
+
+    @@map("published_at")
+}
+
+model Playstyle {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name      String
+    label     String
+    piece     Piece[]
+
+    @@map("playstyles")
+}
+
+model Tag {
+    id            Int          @id @default(autoincrement())
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+    createdBy     User?        @relation(fields: [userId], references: [id])
+    userId        Int?
+    name          String
+    tagCategory   TagCategory? @relation(fields: [tagCategoryId], references: [id])
+    tagCategoryId Int?
+    pieces        Piece[]
+
+    @@map("tags")
+}
+
+model TagCategory {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name      String
+    tags      Tag[]
+
+    @@map("tag_categories")
+}
+
+model Movie {
+    id        String   @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    Int?
+    piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+    pieceId   Int
+
+    @@map("movies")
+}
+
+model Explanation {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    Int?
+    content   String
+    piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+    pieceId   Int
+
+    @@map("explanations")
+}
