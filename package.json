@@ -8,7 +8,8 @@
         "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
         "start": "remix-serve ./build/server/index.js",
         "typecheck": "tsc",
-        "vercel-build": "remix vite:build"
+        "vercel-build": "remix vite:build",
+        "postinstall": "prisma generate"
     },
     "prisma": {
         "seed": "node ./prisma/seed.js"
