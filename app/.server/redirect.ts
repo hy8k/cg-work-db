@@ -44,7 +44,7 @@ export function mypageRedirect() {
 export function dbConnectionErrorRedirect() {
     return redirect("/", {
         headers: [
-            ["Set-Cookie", "fmsg=" + encodeURIComponent("データベースに接続できませんでした。時間をおいてもう一度お試しください。") + "; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
+            ["Set-Cookie", "fmsg=" + encodeURIComponent("データベースに接続できませんでした。") + "; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
             ["Set-Cookie", "fmsgtype=alert; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
             ["Set-Cookie", "newfmsgfg=" + String(new Date().getTime()) + "; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
         ]

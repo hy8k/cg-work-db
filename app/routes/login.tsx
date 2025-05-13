@@ -10,7 +10,7 @@ import { getCurrentUserErrorRedirect, mypageRedirect, unexpectedErrorRedirect } 
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "ギター演奏者のための作品データベース - ログイン" },
+        { title: "クラシックギター音楽作品データベース - ログイン" },
     ];
 };
 
@@ -69,7 +69,7 @@ export async function action({
             return json({ response });
         }
 
-        return redirect("/mypage", {
+        return redirect("/", {
             headers: [
                 ["Set-Cookie", "fmsg=" + encodeURIComponent("ログインしました。") + "; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
                 ["Set-Cookie", "fmsgtype=success; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],

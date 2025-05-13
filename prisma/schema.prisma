@@ -6,23 +6,37 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL") // uses connection pooling
 }
 
+enum BirthYearInfo {
+    EXACT
+    APPROXIMATE
+    UNKNOWN
+}
+
+enum DeathYearInfo {
+    EXACT
+    APPROXIMATE
+    UNKNOWN
+    ALIVE
+}
+
 model User {
-    id          Int           @id @default(autoincrement())
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    username    String        @unique
-    password    String
-    sessions    Session[]
-    pieces      Piece[]
-    composer    Composer[]
-    arrangers   Arranger[]
-    tags        Tag[]
-    movies      Movie[]
-    explanation Explanation[]
+    id                 Int                  @id @default(autoincrement())
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    username           String               @unique
+    password           String
+    sessions           Session[]
+    pieces             Piece[]
+    composer           Composer[]
+    tags               Tag[]
+    scoreSource        ScoreSource[]
+    audioCDSource      AudioCDSource[]
+    youtubeAudioSource YoutubeAudioSource[]
+    Artist             Artist[]
 
     @@map("users")
 }
@@ -38,21 +52,23 @@ model Session {
 }
 
 model Piece {
-    id            Int           @id @default(autoincrement())
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    createdBy     User?         @relation(fields: [userId], references: [id])
-    userId        Int?
-    title         String
-    publishedAt   PublishedAt?  @relation(fields: [publishedAtId], references: [id])
-    publishedAtId Int?
-    playstyle     Playstyle     @relation(fields: [playstyleId], references: [id])
-    playstyleId   Int
-    composers     Composer[]
-    arrangers     Arranger[]
-    tags          Tag[]
-    movies        Movie[]
-    explanations  Explanation[]
+    id                  Int                  @id @default(autoincrement())
+    createdAt           DateTime             @default(now())
+    updatedAt           DateTime             @updatedAt
+    createdBy           User?                @relation(fields: [userId], references: [id])
+    userId              Int?
+    title               String
+    composers           Composer[]
+    tags                Tag[]
+    explanation         String?
+    scoreSources        ScoreSource[]
+    audioCDSources      AudioCDSource[]
+    youtubeAudioSources YoutubeAudioSource[]
+
+    // playstyle   Playstyle  @relation(fields: [playstyleId], references: [id])
+    // playstyleId Int
+    // arrangers s Arranger[]
+    // movies      Movie[]
 
     @@map("pieces")
 }
@@ -66,10 +82,125 @@ model Composer {
     name      String
     pieces    Piece[]
 
+    birthYear     Int?
+    birthYearInfo BirthYearInfo @default(EXACT)
+    deathYear     Int?
+    deathYearInfo DeathYearInfo @default(EXACT)
+    floruitStart  Int?
+    floruitEnd    Int?
+    isFloruit     Boolean       @default(false)
+
     @@map("composers")
 }
 
-model Arranger {
+model Artist {
+    id                 Int                  @id @default(autoincrement())
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    createdBy          User?                @relation(fields: [userId], references: [id])
+    userId             Int?
+    name               String
+    audioCDSource      AudioCDSource[]
+    youtubeAudioSource YoutubeAudioSource[]
+
+    // birthYear     Int?
+    // birthYearInfo BirthOrDeathYearInfo
+    // deathYear     Int?
+    // deathYearInfo BirthOrDeathYearInfo
+    // floruitStart  Int?
+    // floruitEnd    Int?
+    // isFloruit     Boolean              @default(false)
+    // isAlive       Boolean              @default(false)
+
+    @@map("artists")
+}
+
+model ScoreSource {
+    id          Int       @id @default(autoincrement())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    createdBy   User?     @relation(fields: [userId], references: [id])
+    userId      Int?
+    playstyle   Playstyle @relation(fields: [playstyleId], references: [id])
+    playstyleId Int
+    arrangers   String?
+    title       String
+    publisher   String
+    explanation String?
+    url         String?
+    piece       Piece     @relation(fields: [pieceId], references: [id])
+    pieceId     Int
+
+    @@map("score_sources")
+}
+
+model AudioCDSource {
+    id                      Int       @id @default(autoincrement())
+    createdAt               DateTime  @default(now())
+    updatedAt               DateTime  @updatedAt
+    createdBy               User?     @relation(fields: [userId], references: [id])
+    userId                  Int?
+    playstyle               Playstyle @relation(fields: [playstyleId], references: [id])
+    playstyleId             Int
+    arrangers               String?
+    title                   String
+    explanation             String?
+    url                     String?
+    isYoutubeAudioAvailable Boolean
+    youtubeAudioUrl         String?
+    piece                   Piece     @relation(fields: [pieceId], references: [id])
+    pieceId                 Int
+    artists                 Artist[]
+
+    @@map("audio_cd_sources")
+}
+
+model YoutubeAudioSource {
+    id          Int       @id @default(autoincrement())
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    createdBy   User?     @relation(fields: [userId], references: [id])
+    userId      Int?
+    playstyle   Playstyle @relation(fields: [playstyleId], references: [id])
+    playstyleId Int
+    url         String
+    arrangers   String?
+    explanation String?
+    piece       Piece     @relation(fields: [pieceId], references: [id])
+    pieceId     Int
+    artists     Artist[]
+
+    @@map("youtube_audio_sources")
+}
+
+// model Arranger {
+//     id        Int      @id @default(autoincrement())
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+//     createdBy User?    @relation(fields: [userId], references: [id])
+//     userId    Int?
+//     name      String
+//     // pieces    Piece[]
+//     Score     Score[]
+//     Audio     Audio[]
+
+//     @@map("arrangers"s
+// }
+
+model Playstyle {
+    id                 Int                  @id @default(autoincrement())
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    name               String
+    label              String
+    ScoreSource        ScoreSource[]
+    AudioCDSource      AudioCDSource[]
+    YoutubeAudioSource YoutubeAudioSource[]
+
+    @@map("playstyles")
+}
+
+model Tag {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -78,76 +209,17 @@ model Arranger {
     name      String
     pieces    Piece[]
 
-    @@map("arrangers")
-}
-
-model PublishedAt {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    era       Int
-    label     String
-    piece     Piece[]
-
-    @@map("published_at")
-}
-
-model Playstyle {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    name      String
-    label     String
-    piece     Piece[]
-
-    @@map("playstyles")
-}
-
-model Tag {
-    id            Int          @id @default(autoincrement())
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
-    createdBy     User?        @relation(fields: [userId], references: [id])
-    userId        Int?
-    name          String
-    tagCategory   TagCategory? @relation(fields: [tagCategoryId], references: [id])
-    tagCategoryId Int?
-    pieces        Piece[]
-
     @@map("tags")
 }
 
-model TagCategory {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    name      String
-    tags      Tag[]
+// model Movie {
+//     id        String   @id
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+//     createdBy User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+//     userId    Int?
+//     // piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+//     // pieceId   Int
 
-    @@map("tag_categories")
-}
-
-model Movie {
-    id        String   @id
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    createdBy User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    Int?
-    piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
-    pieceId   Int
-
-    @@map("movies")
-}
-
-model Explanation {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    createdBy User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    Int?
-    content   String
-    piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
-    pieceId   Int
-
-    @@map("explanations")
-}
+//     @@map("movies")
+// }

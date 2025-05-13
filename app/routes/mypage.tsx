@@ -10,7 +10,7 @@ import { getCurrentUserErrorRedirect, loginRedirect, unexpectedErrorRedirect } f
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "ギター演奏者のための作品データベース - マイページ" },
+        { title: "クラシックギター音楽作品データベース - マイページ" },
     ];
 };
 

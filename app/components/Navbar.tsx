@@ -35,34 +35,35 @@ export default function Navbar(
     return (
         <nav className="fixed bg-white shadow px-3 py-2 w-full flex justify-between items-center z-20 h-14">
             <div className="hidden md:flex items-center">
-                <button onClick={toggleMenu} className="text-gray-700 focus:outline-none hover:bg-slate-100 p-3 mr-2 rounded-full transition-colors">
+                <button onClick={toggleMenu} className="text-gray-700 focus:outline-none hover:bg-slate-100 p-2 mr-2 rounded-full transition-colors flex flex-col items-center">
                     <RiMenuFill size={18} />
+                    <p className="text-xs">Menu</p>
                 </button>
                 <Link to="/">
-                    <h1 className="text-xl font-bold mr-3">クラシックギター作品データベース</h1>
+                    <h1 className="text-xl font-bold mr-3">クラシックギター音楽作品データベース</h1>
                 </Link>
             </div>
             <div className="hidden md:flex">
                 {currentUserId === 0 ?
                     <>
                         <div className="md:flex mr-2">
-                            <Link to="/register" className=" border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2">ユーザー登録</Link>
-                            <Link to="/login" className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-3 rounded transition-colors">ログイン</Link>
+                            <Link to="/register" className="text-sm border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2">ユーザー登録</Link>
+                            <Link to="/login" className="text-sm bg-blue-600 hover:bg-blue-800 text-white py-2 px-3 rounded transition-colors">ログイン</Link>
                         </div>
                     </>
                     :
                     <>
                         <div className="md:flex mr-2">
-                            <Link to="/mypage" className=" border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2">マイページ</Link>
+                            {/* <Link to="/mypage" className="text-sm border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2">マイページ</Link> */}
                             <Form method="POST" action="/">
-                                <button type="submit" className={`text-white bg-red-600 w-24 py-2 px-3 rounded transition-colors mr-2  
+                                <button type="submit" className={`text-white bg-red-600 border w-20 py-2 px-3 rounded transition-colors mr-2  
                                     ${navigation.state === "submitting" || navigation.state === "loading" ? "" : "hover:bg-red-800 "}`} disabled={navigation.state === "submitting" || navigation.state === "loading"}>
                                     {navigation.state === "submitting" ?
                                         <div className="h-full flex justify-center items-center">
-                                            <div className="animate-spin h-6 w-6 border-4 rounded-full border-t-transparent"></div>
+                                            <div className="animate-spin h-5 w-5 border-4 rounded-full border-t-transparent"></div>
                                         </div>
                                         :
-                                        <p>ログアウト</p>
+                                        <p className="text-sm">ログアウト</p>
                                     }
                                 </button>
                             </Form>
@@ -80,8 +81,9 @@ export default function Navbar(
 
             </div>
             <div className="md:hidden flex items-center">
-                <button onClick={toggleMenu} className="text-gray-700 focus:outline-none hover:bg-slate-100 p-3 mr-2 rounded-full transition-colors">
+                <button onClick={toggleMenu} className="text-gray-700 focus:outline-none hover:bg-slate-100 p-2 mr-2 rounded-full transition-color flex flex-col items-center">
                     <RiMenuFill size={18} />
+                    <p className="text-xs">Menu</p>
                 </button>
                 <Link to="/">
                     <h1 className="text-xl font-bold">クラシックギター作品DB</h1>
@@ -95,9 +97,9 @@ export default function Navbar(
             <div className={`fixed top-0 left-0 w-64 h-full bg-white shadow transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out z-20`}>
                 <div className="p-4 flex flex-col h-full">
                     <div className="flex-grow">
-                        <Link to={"/userlist"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>ユーザーリスト</Link>
-                        <Link to={"/sessionlist"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>セッションリスト</Link>
-                        <Link to={"/pieces"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>作品一覧</Link>
+                        {/* <Link to={"/userlist"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>ユーザーリスト</Link>
+                        <Link to={"/sessionlist"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>セッションリスト</Link> */}
+                        <Link to={"/works"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>作品一覧</Link>
                         <Link to={"/post"} className="block hover:bg-slate-100 py-1 px-2 transition-colors rounded" onClick={toggleMenu}>作品投稿</Link>
                     </div>
                     <div className="px-1 w-full rounded flex flex-col md:hidden">
@@ -119,7 +121,7 @@ export default function Navbar(
                                 :
                                 <>
                                     <div className="flex mr-2">
-                                        <Link to="/mypage" className="text-xs border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2" onClick={toggleMenu}>マイページ</Link>
+                                        {/* <Link to="/mypage" className="text-xs border border-black hover:bg-slate-100 py-2 px-3 rounded transition-colors mr-2" onClick={toggleMenu}>マイページ</Link> */}
                                         <Form method="POST" action="/">
                                             <button type="submit" className="text-xs text-white bg-red-600 hover:bg-red-800 py-2 px-3 rounded transition-colors mr-2" onClick={toggleMenu}>ログアウト</button>
                                         </Form>

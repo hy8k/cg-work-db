@@ -12,7 +12,7 @@ import { getCurrentUserErrorRedirect, mypageRedirect, unexpectedErrorRedirect } 
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "ギター演奏者のための作品データベース - 新規登録" },
+        { title: "クラシックギター音楽作品データベース - 新規登録" },
     ];
 };
 
@@ -46,11 +46,11 @@ export const action = async ({
     try {
         const formData = await request.formData();
 
-        // client validation
-        const clientValidationResult = validateRegisterFormOnClient(formData);
-        response.usernameMessages = clientValidationResult.usernameMessages;
-        response.passwordMessages = clientValidationResult.passwordMessages;
-        if (clientValidationResult.error === true) {
+        // format validation
+        const formatValidationResult = validateRegisterFormFormat(formData);
+        response.usernameMessages = formatValidationResult.usernameMessages;
+        response.passwordMessages = formatValidationResult.passwordMessages;
+        if (formatValidationResult.error === true) {
             return json({ response });
         }
         // server validation
@@ -78,7 +78,7 @@ export const action = async ({
             return json({ response });
         }
 
-        return redirect("/mypage", {
+        return redirect("/", {
             headers: [
                 ["Set-Cookie","sid=" + loginResult.sessionId + ";Max-Age=31536000; HttpOnly; Path='/'; Samesite:Lax; Secure"],
                 ["Set-Cookie", "fmsg=" + encodeURIComponent("正常に登録されました。登録されたアカウントでログインしました。") + "; Max-Age=5; HttpOnly; Path='/'; Samesite:Lax;"],
@@ -93,7 +93,7 @@ export const action = async ({
     }
 };
 
-export const validateRegisterFormOnClient = (formData: FormData) => {
+export const validateRegisterFormFormat = (formData: FormData) => {
     const username = String(formData.get("username"));
     const password = String(formData.get("password"));
     const validationResult = {
